@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import bg from '../assets/bg.png';
 import { useNavigate } from "react-router-dom";
 import { Button } from "../componens/ui/button";
+import { useDispatch } from "react-redux";
 import newRequest from "../utils/newRequest";
+import { login, loginFailure, loginStart } from "../redux/authSlice";
 
 function Signup() {
   const [name, setName] = useState("");
@@ -11,24 +13,29 @@ function Signup() {
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    dispatch(loginStart());
     setErr("");
     try {     
       const response = await newRequest.post("/api/v1/users/registar", { name, email, password }, {
-        headers: { "Content-Type": "application/json" }
-
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true
       });
 
       if (response) {
         console.log(response.data);
+        dispatch(login(response.data));
         navigate("/");
       }
     } catch (error) {
       console.log(error.response?.data);
+      setLoading(false)
       setErr(error.response?.data || "Something went wrong");
+      dispatch(loginFailure(error.response?.data || "Something went wrong"));
     } finally {
       setLoading(false);
     }

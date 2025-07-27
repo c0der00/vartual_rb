@@ -6,6 +6,13 @@ import { createBrowserRouter,RouterProvider } from 'react-router-dom'
 import Singup from './pages/Singup.jsx'
 import Signin from './pages/signin.jsx'
 import Home from './pages/Home.jsx'
+import { Provider } from 'react-redux'
+import AuthLayout from './componens/AuthLayout.jsx'
+import {store,  persistor } from './redux/store.js'
+import { PersistGate } from 'redux-persist/integration/react'
+import Costamize from './componens/Costamize.jsx'
+import Costamixe from './componens/Costamixe.jsx'
+
 
 const router = createBrowserRouter(
   [
@@ -15,16 +22,44 @@ const router = createBrowserRouter(
     children:[
       {
         path:"",
-        element:<Home />
+        element:(
+          <AuthLayout authentication={true}>
+            <Home/>
+          </AuthLayout>
+        )
       },
       {
         path:"/signup",
-        element:<Singup/>
+        element:(
+          <AuthLayout authentication={false}>
+            <Singup/>
+          </AuthLayout>
+        )
       },
       {
         path:"/signin",
-        element:<Signin/>
-      }
+        element:(
+          <AuthLayout authentication={false}>
+            <Signin/>
+          </AuthLayout>
+        )
+      },
+      {
+        path:"/costamize",
+        element:(
+          <AuthLayout authentication={false}>
+            <Costamize/>
+          </AuthLayout>
+        )
+      },
+      {
+        path:"/costamixe",
+        element:(
+          <AuthLayout authentication={false}>
+            <Costamixe/>
+          </AuthLayout>
+        )
+      },
     ],
     },
       
@@ -34,6 +69,10 @@ const router = createBrowserRouter(
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router={router}/>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <RouterProvider router={router}/>
+      </PersistGate>
+    </Provider>
   </StrictMode>,
 )

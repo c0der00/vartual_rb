@@ -16,6 +16,12 @@ const userSechema = Schema({
         type:String,
         require:true
     },
+    assistantImage:{
+        type: String,
+    },
+    assistantName:{
+        type:String,
+    },
     refreshToken : {
         type : String
     },

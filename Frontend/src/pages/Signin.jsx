@@ -3,6 +3,8 @@ import bg from '../assets/bg.png';
 import { useNavigate } from "react-router-dom";
 import { Button } from "../componens/ui/button";
 import newRequest from "../utils/newRequest";
+import { useDispatch } from "react-redux";
+import { login, loginFailure, loginStart} from "../redux/authSlice";
 
 function Signin() {
   const [name, setName] = useState("");
@@ -11,20 +13,24 @@ function Signin() {
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    dispatch(loginStart());
     setErr("");
     try {
-      const response = await newRequest.post("/api/v1/users/login", { name, email, password });
+      const response = await newRequest.post("/api/v1/users/login", { name, email, password }, { withCredentials: true });
 
       if (response) {
         console.log(response.data);
+        dispatch(login(response.data));
         navigate("/");
       }
     } catch (error) {
       console.log(error.response?.data);
+      dispatch(loginFailure(error.response?.data || "Something went wrong"));
       setErr(error.response?.data || "Something went wrong");
     } finally {
       setLoading(false);
