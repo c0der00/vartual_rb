@@ -25,7 +25,7 @@ const userSechema = Schema({
     refreshToken : {
         type : String
     },
-    watchHistorty :[
+    Historty :[
         {type: String}
     ]
 },{timestamps:true})

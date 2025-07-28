@@ -47,7 +47,7 @@ const router = createBrowserRouter(
       {
         path:"/costamize",
         element:(
-          <AuthLayout authentication={false}>
+          <AuthLayout authentication={true}>
             <Costamize/>
           </AuthLayout>
         )
@@ -55,7 +55,7 @@ const router = createBrowserRouter(
       {
         path:"/costamixe",
         element:(
-          <AuthLayout authentication={false}>
+          <AuthLayout authentication={true}>
             <Costamixe/>
           </AuthLayout>
         )

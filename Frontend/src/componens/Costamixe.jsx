@@ -1,18 +1,47 @@
 import React, { useState } from "react";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import  newRequest from "../utils/newRequest";
 
 function Costamixe() {
   const [name, setName] = useState("");
+  const [err, setErr] = useState("");
   const navigate = useNavigate();
+  const selectedImage = useSelector((state) => state.selectedImage?.image);
+
+  const handleSubmit = async(e) => {
+    e.preventDefault();
+    
+    try {
+      const formadata = new FormData();
+      formadata.append("assistantName", name);
+      formadata.append("assistantImage", selectedImage);
+  
+      const response = await newRequest.post("/api/v1/users/update",formadata,{
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      if (response) {
+        setErr("");
+        navigate("/");
+      }
+  
+       
+
+      
+    } catch (error) {
+      console.log("Error creating assistant:", error); 
+      setErr(error?.response?.data|| "something went wrong");
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-t from-blue-900 to-black flex items-center justify-center px-4">
       <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          navigate("/");
-        }}
+        onSubmit={ handleSubmit }
         className="w-full max-w-md p-8 rounded-2xl flex flex-col items-center gap-6  "
       >
         <h1 className="text-white text-3xl font-bold text-center">
@@ -34,6 +63,11 @@ function Costamixe() {
         >
           Create Assistant
         </Button>
+        {err && (
+        <div className="w-full max-w-[600px] max-h-[100px] max-w-md text-red-500 text-center mt-4 overflow-hidden">
+          {err}
+        </div>
+      )}
       </form>
     </div>
   );

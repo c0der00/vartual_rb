@@ -11,7 +11,6 @@ import { useNavigate } from "react-router-dom";
 
 function Costamize() {
     const [image, setImage] = useState(null);
-    const [file, setFile] = useState(null);
     const [err, setErr] = useState("");
     const selecter = useSelector((state) => state.selectedImage?.image);
     const dispatch = useDispatch();
@@ -23,7 +22,6 @@ function Costamize() {
             if (!selectedFile) return;
             dispatch(selectImage(selectedFile));
             setErr("");
-            setFile(selectedFile);
             setImage(URL.createObjectURL(selectedFile));
         } catch (error) {
             console.error("Error loading image:", error);

@@ -2,6 +2,7 @@ import { asyncHandler } from "../utills/asyncHandler.js"
 import { ApiError } from "../utills/ApiError.js"
 import { ApiResponse } from "../utills/ApiResponse.js"
 import { User } from "../model/user.model.js"
+import { uploadOnCloudinary } from "../utills/cloudinary.js"
 
 const generateAccessAndRefereshToken = async (userId) => {
     try {
@@ -162,9 +163,64 @@ const getCurrentUser = asyncHandler(async (req, res) => {
     )
 })
 
+const updateAssistantDetails = asyncHandler(async (req, res) => { 
+    const { assistantImage, assistantName } = req.body;
+
+    if (!assistantName && !assistantImage) {
+        throw new ApiError(400, "Assistant image and name are required");
+    }
+
+    const image = req.files?.assistantImage?.[0]?.path;
+
+    console.log("Uploaded image result:", assistantImage);
+
+    let updatedUser;
+
+    if (image) {
+        const uploadResult = await uploadOnCloudinary(image);
+        
+
+        if (!uploadResult) {
+            throw new ApiError(500, "Failed to upload image to Cloudinary");
+        }
+
+        updatedUser = await User.findByIdAndUpdate(
+            req.user._id,
+            {
+                assistantImage: uploadResult.url,  
+                assistantName: assistantName,
+            },
+            {
+                new: true,
+            }
+        ).select("-password -refreshToken");
+    } else {
+        updatedUser = await User.findByIdAndUpdate(
+            req.user._id,
+            {
+                assistantName: assistantName,
+                assistantImage: assistantImage,
+            },
+            {
+                new: true,
+            }
+        ).select("-password -refreshToken");
+    }
+
+    if (!updatedUser) {
+        throw new ApiError(404, "User not found");
+    }
+
+    return res.status(200).json(
+        new ApiResponse(200, updatedUser, "Assistant details updated successfully")
+    );
+});
+
+
 export {
     registerUser,
     loginUser,
     logoutUser,
     getCurrentUser,
+    updateAssistantDetails
 };

@@ -4,14 +4,9 @@ import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import connectDB from "./db/index.js"
 
-dotenv.config({
-    path: './.env',
-})
+dotenv.config({path: './.env'});
 
-
-
-
- const app = express()
+const app = express()
 
 
 
