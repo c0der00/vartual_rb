@@ -48,5 +48,7 @@ connectDB()
 })
 
 import userRouter  from './router/user.router.js'
+import gaminiRouter from './router/gamini.router.js' 
 
 app.use("/api/v1/users",userRouter)
+app.use("/api/v1/gamini", gaminiRouter)

@@ -2,25 +2,70 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import newRequest from "../utils/newRequest";
 import { useNavigate } from "react-router-dom";
-import { logout } from "../redux/authSlice";
+import { login, logout } from "../redux/authSlice";
 
 function Home(){
 
     const navigator = useNavigate();
     const dispatch = useDispatch();
     const [user, setUser] = useState(null);
-
+    const selectedUser = useSelector((state) => state.auth);
+   
+    const fetchGaminiResponse = async (prompt) => {
+        const response = await newRequest.post("api/v1/gamini",{
+          prompt,
+          assistentName: selectedUser.userData?.data?.assistentName,
+          name : selectedUser.userData?.data?.name
+        })
+        console.log("Gamini Response:", response.data);
+        return response.data;
+      }
+    
+     
     useEffect(() => {
         const fetchData = async () => {
             const response = await newRequest.get("/api/v1/users/current");
             if (response) {
-                console.log("Current user data:", response.data);
+                console.log("Current user data:", response.data); 
                 setUser(response.data);
             }
-            
+            dispatch(login({
+                userData: response.data,
+            }));
         }
         fetchData();
     },[dispatch])
+
+    
+      
+    useEffect(() => {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+
+      recognition.continuous= true;
+      recognition.lang = "en-US";
+      
+      recognition.onresult = async(event) => {
+        console.log(event);
+        const transcript = event?.results[event.results.length-1][0]?.transcript.replace(".","").trim();
+        console.log("Transcript:", transcript);
+        
+        if (transcript.toLowerCase().includes(selectedUser.userData?.data?.name.toLowerCase())) {
+        const responseGamini = await fetchGaminiResponse(transcript);
+        console.log(responseGamini);
+        
+        }
+
+      }
+
+      recognition.start();
+
+      
+    },[])
+
+    
+ 
+ 
 
 return(
  <div
