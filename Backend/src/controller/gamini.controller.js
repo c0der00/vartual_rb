@@ -59,7 +59,7 @@ const gaminiResponse = async (req, res) => {
                         {
                             type: "get_time",
                             userinput:parsedJson.userinput,
-                            response: `Today's date is ${moment().format("MMMM")} `
+                            response: `Today's month is ${moment().format("MMMM")} `
                         },
                     )
                 )
@@ -98,15 +98,15 @@ const gaminiResponse = async (req, res) => {
             case "calculator_open":
             case "instagram_open":
             case "facebook_open":
-            case "weather-show" :
+            case "weather_show" :
+            case "logout" :
                 return res.status(200).json(
                     new ApiResponse(
                         200,
                         {
                             type: type,
-                            userInput: parsedJson.userInput,
+                            userinput: parsedJson.userinput,
                             response: parsedJson.response,
-                            sources: parsedJson.sources
                         },
                     )
                 );

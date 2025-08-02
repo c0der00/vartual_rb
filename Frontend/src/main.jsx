@@ -12,6 +12,8 @@ import {store,  persistor } from './redux/store.js'
 import { PersistGate } from 'redux-persist/integration/react'
 import Costamize from './componens/Costamize.jsx'
 import Costamixe from './componens/Costamixe.jsx'
+import { VirtualAssistant } from './componens/VirtualAssistant.jsx'
+import { SimpleRobotController } from './componens/SimpleRobotController.jsx'
 
 
 const router = createBrowserRouter(
@@ -57,6 +59,14 @@ const router = createBrowserRouter(
         element:(
           <AuthLayout authentication={true}>
             <Costamixe/>
+          </AuthLayout>
+        )
+      },
+      {
+        path:"/vr",
+        element:(
+          <AuthLayout authentication={true}>
+            <SimpleRobotController/>
           </AuthLayout>
         )
       },
